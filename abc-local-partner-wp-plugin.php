@@ -12,7 +12,7 @@ Plugin URI: https://abcmanager.nl/
 
 Description: Wordpress Plugin to post new updates to ABC Manager of NH/AT5
 
-Version: 0.1
+Version: 0.1.2
 
 Author: AngryBytes B.V.
 
