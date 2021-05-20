@@ -1,13 +1,19 @@
 <?php
+
 /*
  * Updater for newer versions
  */
+
 class AbcLocalPartnerWp_Updater
 {
     protected $file;
     protected $plugin;
     protected $basename;
     protected $active;
+    private $username;
+    private $repository;
+    private $authorize_token;
+    private $github_response;
 
     public function __construct($file)
     {
@@ -22,4 +28,83 @@ class AbcLocalPartnerWp_Updater
         $this->basename = plugin_basename($this->file);
         $this->active = is_plugin_active($this->basename);
     }
+
+    public function set_username($username)
+    {
+        $this->username = $username;
+    }
+
+    public function set_repository($repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function authorize($token)
+    {
+        $this->authorize_token = $token;
+    }
+
+    private function get_repository_info()
+    {
+        if (is_null($this->github_response)) {
+            $request_uri = sprintf('https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository);
+            if ($this->authorize_token) {
+                $request_uri = add_query_arg('access_token', $this->authorize_token, $request_uri);
+            }
+            $response = json_decode(wp_remote_retrieve_body(wp_remote_get($request_uri)), true);
+            if (is_array($response)) {
+                $response = current($response);
+            }
+            if ($this->authorize_token) {
+                $response['zipball_url'] = add_query_arg('access_token', $this->authorize_token, $response['zipball_url']);
+            }
+            $this->github_response = $response;
+        }
+    }
+
+    public function initialize()
+    {
+        add_filter('pre_set_site_transient_update_plugins', array($this, 'modify_transient'), 10, 1);
+        add_filter('plugins_api', array($this, 'plugin_popup'), 10, 3);
+        add_filter('upgrader_post_install', array($this, 'after_install'), 10, 3);
+
+        add_filter('upgrader_pre_download',
+            function () {
+                add_filter('http_request_args', [$this, 'download_package'], 15, 2);
+                return false;
+            }
+        );
+    }
+
+    public function modify_transient($transient)
+    {
+
+        if (property_exists($transient, 'checked')) {
+
+            if ($checked = $transient->checked) {
+                $this->get_repository_info();
+
+                $out_of_date = version_compare($this->github_response['tag_name'], $checked[$this->basename], 'gt'); // Check if we're out of date
+
+                if ($out_of_date) {
+
+                    $new_files = $this->github_response['zipball_url'];
+
+                    $slug = current(explode('/', $this->basename));
+
+                    $plugin = array(
+                        'url' => $this->plugin["PluginURI"],
+                        'slug' => $slug,
+                        'package' => $new_files,
+                        'new_version' => $this->github_response['tag_name']
+                    );
+
+                    $transient->response[$this->basename] = (object)$plugin;
+                }
+            }
+        }
+
+        return $transient;
+    }
+
 }

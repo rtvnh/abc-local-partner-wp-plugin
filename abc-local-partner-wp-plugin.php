@@ -24,6 +24,17 @@ Text Domain: abclocalpartner
 
 */
 
+if( ! class_exists( 'AbcLocalPartnerWp_Updater' ) ){
+    include_once( plugin_dir_path( __FILE__ ) . 'updater.php' );
+}
+
+$updater = new AbcLocalPartnerWp_Updater( __FILE__ );
+$updater->set_username('rtvnh');
+$updater->set_repository('abc-local-partner-wp-plugin');
+$updater->authorize( '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' );
+
+$updater->initialize();
+
 function abclocalpartner_add_settings_page()
 {
     add_options_page('ABC Manager Page', 'ABC Manager Plugin Menu', 'manage_options', 'abclocalpartner-example-plugin', 'abclocalpartner_render_plugin_settings_page');
