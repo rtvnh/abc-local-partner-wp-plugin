@@ -12,7 +12,7 @@ Plugin URI: https://abcmanager.nl/
 
 Description: Wordpress Plugin to post new updates to ABC Manager of NH/AT5
 
-Version: 0.1.4
+Version: 0.1.7
 
 Author: AngryBytes B.V.
 
@@ -24,25 +24,26 @@ Text Domain: abclocalpartner
 
 */
 
-if (!class_exists('AbcLocalPartnerWp_Updater')) {
-    include_once(plugin_dir_path(__FILE__) . 'updater.php');
+if ((string)get_option('abclocalpartner_option_access_token') !== '') {
+    include_once plugin_dir_path(__FILE__) . '/updater.php';
+
+    $updater = new AbcLocalPartnerWp_Updater(__FILE__);
+    $updater->set_username('elmarwouters');
+    $updater->set_repository('wp-abc');
+    $updater->authorize(get_option('abclocalpartner_option_access_token'));
+    $updater->initialize();
 }
-
-$updater = new AbcLocalPartnerWp_Updater(__FILE__);
-$updater->set_username('rtvnh');
-$updater->set_repository('abc-local-partner-wp-plugin');
-$updater->authorize('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');
-
-$updater->initialize();
 
 function abclocalpartner_register_settings()
 {
-    add_option('abclocalpartner_option_abc_url', 'Fill in your domain here');
-    add_option('abclocalpartner_option_partner_secret', 'Your partner secret');
+    add_option('abclocalpartner_option_abc_url', '');
+    add_option('abclocalpartner_option_partner_secret', '');
+    add_option('abclocalpartner_option_access_token', '');
     register_setting(
         'abclocalpartner_options_group',
         'abclocalpartner_option_abc_url',
         'abclocalpartner_option_partner_secret',
+        'abclocalpartner_option_access_token',
         'abclocalpartner_callback'
     );
 }
@@ -89,6 +90,16 @@ function abclocalpartner_options_page()
                         <input type="text" id="abclocalpartner_option_partner_secret"
                                name="abclocalpartner_option_partner_secret" class="regular-text"
                                value="<?php echo get_option('abclocalpartner_option_partner_secret'); ?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="abclocalpartner_option_access_token">Access Token</label>
+                    </th>
+                    <td>
+                        <input type="text" id="abclocalpartner_option_access_token"
+                               name="abclocalpartner_option_access_token" class="regular-text"
+                               value="<?php echo get_option('abclocalpartner_option_access_token'); ?>"/>
                     </td>
                 </tr>
                 </tbody>
