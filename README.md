@@ -6,4 +6,5 @@
 Wordpress Plugin to post new updates to ABC Manager of NH/AT5
 
 # GitHub token
-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
+A token needs to be provided, to enable Plugin updates
+
