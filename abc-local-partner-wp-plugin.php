@@ -23,8 +23,8 @@ if ((string)get_option('abclocalpartner_option_access_token') !== '') {
     include_once plugin_dir_path(__FILE__) . '/updater.php';
 
     $updater = new AbcLocalPartnerWp_Updater(__FILE__);
-    $updater->set_username('elmarwouters');
-    $updater->set_repository('wp-abc');
+    $updater->set_username('rtvnh');
+    $updater->set_repository('abc-local-partner-wp-plugin');
     $updater->authorize(get_option('abclocalpartner_option_access_token'));
     $updater->initialize();
 }
