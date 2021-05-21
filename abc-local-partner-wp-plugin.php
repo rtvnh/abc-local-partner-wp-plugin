@@ -12,7 +12,7 @@ Plugin URI: https://abcmanager.nl/
 
 Description: Wordpress Plugin to post new updates to ABC Manager of NH/AT5
 
-Version: 0.1.7
+Version: 0.2
 
 Author: AngryBytes B.V.
 
@@ -42,7 +42,15 @@ function abclocalpartner_register_settings()
     register_setting(
         'abclocalpartner_options_group',
         'abclocalpartner_option_abc_url',
+        'abclocalpartner_callback'
+    );
+    register_setting(
+        'abclocalpartner_options_group',
         'abclocalpartner_option_partner_secret',
+        'abclocalpartner_callback'
+    );
+    register_setting(
+        'abclocalpartner_options_group',
         'abclocalpartner_option_access_token',
         'abclocalpartner_callback'
     );
