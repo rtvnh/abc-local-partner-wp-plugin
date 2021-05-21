@@ -6,21 +6,16 @@
 
 /*
 
-Plugin Name: ABC Manager - Local Partner Wordpress
-
-Plugin URI: https://abcmanager.nl/
-
-Description: Wordpress Plugin to post new updates to ABC Manager of NH/AT5
-
-Version: 0.2
-
-Author: AngryBytes B.V.
-
-Author URI: https://angrybytes.com
-
-License: MIT
-
-Text Domain: abclocalpartner
+Plugin Name:        ABC Manager - Local Partner Wordpress
+Plugin URI:         https://abcmanager.nl/
+Description:        Wordpress Plugin to post new updates to ABC Manager of NH/AT5
+Version:            0.2.1
+Author:             AngryBytes B.V.
+Author URI:         https://angrybytes.com
+License:            MIT
+Text Domain:        abclocalpartner
+Requires at least:  5.7
+Requires PHP:       7.3
 
 */
 
@@ -77,7 +72,8 @@ function abclocalpartner_options_page()
         <form method="post" action="options.php">
             <?php settings_fields('abclocalpartner_options_group'); ?>
             <h2>ABC Manager Options</h2>
-            <p>Please adjust the settings, for connection with ABC</p>
+            <p>Please adjust the settings, for connection with ABC. If your not sure to know which codes are required,
+               please read the docs.</p>
             <table class="form-table" role="presentation">
                 <tbody>
                 <tr>
