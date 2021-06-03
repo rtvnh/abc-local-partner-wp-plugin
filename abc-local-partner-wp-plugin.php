@@ -6,7 +6,7 @@
  * Plugin Name:        ABC Manager - Local Partner Wordpress
  * Plugin URI:         https://abcmanager.nl/
  * Description:        Wordpress Plugin to post new updates to ABC Manager of NH/AT5
- * Version:            0.6.1
+ * Version:            0.6.2
  * Author:             AngryBytes B.V.
  * Author URI:         https://angrybytes.com
  * License:            MIT

@@ -26,7 +26,12 @@ environments through a URL API, this URL will be provided by RTV NH.
 
 To validate the communication we use a Partner Token which is provided by oAuth, this simply verifies if it's the
 correct application which communicate with ABC Manager. It's a simple and safe option to communicate. The Partner Token
-is unique and should not be shared with any other but yourself. Otherwise, we can't register which application is sending
-news articles to ABC Manager, so it's safe but also very necessary.
+is unique and should not be shared with any other but yourself. Otherwise, we can't register which application is
+sending news articles to ABC Manager, so it's safe but also very necessary.
 
 If you filled in the credentials, don't forget to click the *Save Changes* button
+
+## Dutch documentation
+
+Voor de Nederlandse
+documentatie, [klikt u hier](https://github.com/rtvnh/abc-local-partner-wp-plugin/blob/develop/docs/nl.md).
