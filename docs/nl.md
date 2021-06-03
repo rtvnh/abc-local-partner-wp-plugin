@@ -49,6 +49,7 @@ Om duidelijk te kunnen valideren welke applicatie er communiceert met ABC Manage
 token, deze zorgt er voor dat ABC Manager duidelijk weet welke applicatie er een bericht probeert te plaatsen. Indien
 deze niet is ingevuld is, wordt er ook geen request naar ABC Manager uitgevoerd. De Partner Token is uniek voor uw
 omroep/organisatie en niet universeel. Voor ABC Manager is het dan duidelijk onder welke omroep het bericht moet vallen.
+
 ---
 
 ## Werking plug-in
