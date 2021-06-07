@@ -55,7 +55,6 @@ class AbcLocalPartnerWp_Updater {
 				CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
 				CURLOPT_CUSTOMREQUEST  => "GET",
 				CURLOPT_HTTPHEADER     => [
-					"Authorization: token " . $this->authorize_token,
 					"User-Agent: AbcLocalPartnerWp_Updater/1.2.3"
 				]
 			] );
@@ -95,7 +94,7 @@ class AbcLocalPartnerWp_Updater {
 			if ( $checked = $transient->checked ) {
 				$this->get_repository_info();
 
-				$out_of_date = version_compare( $this->github_response['tag_name'], $checked[ $this->basename ], 'gt' );
+				$out_of_date = version_compare( (string)$this->github_response['tag_name'], $checked[ $this->basename ], 'gt' );
 
 				if ( $out_of_date ) {
 					$new_files = $this->github_response['zipball_url'];
@@ -105,7 +104,7 @@ class AbcLocalPartnerWp_Updater {
 						'url'         => $this->plugin['PluginURI'],
 						'slug'        => $slug,
 						'package'     => $new_files,
-						'new_version' => $this->github_response['tag_name']
+						'new_version' => (string)$this->github_response['tag_name']
 					];
 
 					$transient->response[ $this->basename ] = (object) $plugin;
