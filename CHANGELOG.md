@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.3] - 2021-06-07
+
+### Changed
+Credentials to private repository are no longer needed, the functionality for that is disabled.
+
 ## [0.6.2] - 2021-06-03
 
 ### Changed
