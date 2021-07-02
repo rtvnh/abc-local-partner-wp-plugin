@@ -6,7 +6,7 @@
  * Plugin Name:        ABC Manager - Local Partner Wordpress
  * Plugin URI:         https://abcmanager.nl/
  * Description:        Wordpress Plugin to post new updates to ABC Manager of NH/AT5
- * Version:            0.6.3
+ * Version:            0.7
  * Author:             AngryBytes B.V.
  * Author URI:         https://angrybytes.com
  * License:            MIT
@@ -96,6 +96,40 @@ function abclocalpartner_options_page() {
                         <input type="text" id="abclocalpartner_option_partner_secret"
                                name="abclocalpartner_option_partner_secret" class="regular-text"
                                value="<?php echo get_option( 'abclocalpartner_option_partner_secret' ); ?>"/>
+                    </td>
+                </tr>
+                <style type="text/css">
+                    .status-dot {
+                        height: 10px;
+                        width: 10px;
+                        border-radius: 1000px;
+                        display: inline-block;
+                    }
+
+                    .status-dot.is-red {
+                        background-color: red;
+                    }
+
+                    .status-dot.is-green {
+                        background-color: green;
+                    }
+                </style>
+				<?php
+				// Are ABC and Wordpress connected?
+				$headers = @get_headers( get_option( 'abclocalpartner_option_abc_url' ) );
+
+				if ( $headers && strpos( $headers[0], '200' ) ) {
+					$status      = 'up';
+					$statusColor = 'green';
+				} else {
+					$status      = 'down';
+					$statusColor = 'red';
+				}
+				?>
+                <tr>
+                    <td>
+                        Current connection state is: <?= $status ?> <span
+                                class="status-dot is-<?= $statusColor ?>"></span>
                     </td>
                 </tr>
                 </tbody>
