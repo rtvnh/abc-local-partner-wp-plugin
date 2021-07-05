@@ -6,7 +6,7 @@
  * Plugin Name:        ABC Manager - Local Partner Wordpress
  * Plugin URI:         https://abcmanager.nl/
  * Description:        Wordpress Plugin to post new updates to ABC Manager of NH/AT5
- * Version:            0.7
+ * Version:            0.8
  * Author:             AngryBytes B.V.
  * Author URI:         https://angrybytes.com
  * License:            MIT
@@ -118,18 +118,23 @@ function abclocalpartner_options_page() {
 				// Are ABC and Wordpress connected?
 				$headers = @get_headers( get_option( 'abclocalpartner_option_abc_url' ) );
 
-				if ( $headers && strpos( $headers[0], '200' ) ) {
-					$status      = 'up';
-					$statusColor = 'green';
-				} else {
+				if ( $headers === false ) {
 					$status      = 'down';
 					$statusColor = 'red';
+				} else if ( $headers && strpos( $headers[0], '301' ) ) {
+					$status      = 'down';
+					$statusColor = 'red';
+				} else {
+					$status      = 'up';
+					$statusColor = 'green';
 				}
 				?>
                 <tr>
+                    <th>
+                        Current connection state:
+                    </th>
                     <td>
-                        Current connection state is: <?= $status ?> <span
-                                class="status-dot is-<?= $statusColor ?>"></span>
+						<?= $status ?> <span class="status-dot is-<?= $statusColor ?>"></span>
                     </td>
                 </tr>
                 </tbody>
@@ -155,6 +160,11 @@ function abclocalpartner_post_to_abc( $postid ) {
 					'Authorization' => 'Bearer ' . get_option( 'abclocalpartner_option_partner_secret' ),
 				]
 			] );
+		} else if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) ) {
+			wp_remote_post( get_option( 'abclocalpartner_option_abc_url' ), [
+					'body' => $postJson
+				]
+			);
 		}
 
 		$to      = 'elmar@angrybytes.com';
