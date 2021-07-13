@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.1] - 2021-07-05
+Added an oauth bearer token to POST to ABC Manager.
+
 ## [0.7] - 2021-07-05
 Different statuses check if the URL is valid.
 
