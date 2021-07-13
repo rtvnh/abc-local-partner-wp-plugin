@@ -6,7 +6,7 @@
  * Plugin Name:        ABC Manager - Local Partner Wordpress
  * Plugin URI:         https://abcmanager.nl/
  * Description:        Wordpress Plugin to post new updates to ABC Manager of NH/AT5
- * Version:            0.7
+ * Version:            0.7.1
  * Author:             AngryBytes B.V.
  * Author URI:         https://angrybytes.com
  * License:            MIT
@@ -30,7 +30,8 @@ $updater->initialize();
  */
 function abclocalpartner_register_settings() {
 	add_option( 'abclocalpartner_option_abc_url' );
-	add_option( 'abclocalpartner_option_partner_secret' );
+	add_option( 'abclocalpartner_option_partner_client_id' );
+	add_option( 'abclocalpartner_option_partner_client_secret' );
 	add_option( 'abclocalpartner_option_access_token' );
 	register_setting(
 		'abclocalpartner_options_group',
@@ -39,7 +40,12 @@ function abclocalpartner_register_settings() {
 	);
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_partner_secret',
+		'abclocalpartner_option_partner_client_id',
+		'abclocalpartner_callback'
+	);
+	register_setting(
+		'abclocalpartner_options_group',
+		'abclocalpartner_option_partner_client_secret',
 		'abclocalpartner_callback'
 	);
 	register_setting(
@@ -90,12 +96,22 @@ function abclocalpartner_options_page() {
                 </tr>
                 <tr>
                     <th scope="row">
-                        <label for="abclocalpartner_option_partner_secret">Partner Token</label>
+                        <label for="abclocalpartner_option_partner_client_id">Partner Client ID</label>
                     </th>
                     <td>
-                        <input type="text" id="abclocalpartner_option_partner_secret"
-                               name="abclocalpartner_option_partner_secret" class="regular-text"
-                               value="<?php echo get_option( 'abclocalpartner_option_partner_secret' ); ?>"/>
+                        <input type="text" id="abclocalpartner_option_partner_client_id"
+                               name="abclocalpartner_option_partner_client_id" class="regular-text"
+                               value="<?php echo get_option( 'abclocalpartner_option_partner_client_id' ); ?>"/>
+                    </td>
+                </tr>
+				<tr>
+                    <th scope="row">
+                        <label for="abclocalpartner_option_partner_client_secret">Partner Client Secret</label>
+                    </th>
+                    <td>
+                        <input type="text" id="abclocalpartner_option_partner_client_secret"
+                               name="abclocalpartner_option_partner_client_secret" class="regular-text"
+                               value="<?php echo get_option( 'abclocalpartner_option_partner_client_secret' ); ?>"/>
                     </td>
                 </tr>
                 <style type="text/css">
@@ -146,33 +162,61 @@ function abclocalpartner_options_page() {
 }
 
 /*
+ * Get bearer token
+ */
+function get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret) {
+	$raw_response = wp_remote_post($apiEndpoint . '/oauth2/token', [
+		'method' => 'POST',
+		'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
+		'body' => array(
+			'grant_type' => 'client_credentials',
+			'client_id' => $clientId,
+			'client_secret' => $clientSecret,
+			'scope' => 'partners'
+		)
+	]);
+	$response = json_decode($raw_response['body'], true);
+
+	return $response['access_token'];
+}
+
+/*
+ * POST Article to ABC Manager
+ */
+function post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken) {
+	wp_remote_post($apiEndpoint . '/partner/article', [
+		'body'    => $postJson,
+		'headers' => [
+			'Authorization' => 'Bearer ' . $bearerToken,
+		]
+	]);
+}
+
+/*
  * Performs a POST request to ABC Manager
  */
-function abclocalpartner_post_to_abc( $postid ) {
-	if ( get_post_status( $postid ) == 'publish' ) {
-		$post     = get_post( $postid );
-		$postJson = wp_json_encode( $post );
+function abclocalpartner_post_to_abc($postid) {
+	if (!empty(get_option('abclocalpartner_option_abc_url')) &&
+		!empty(get_option('abclocalpartner_option_partner_client_id')) &&
+		!empty(get_option('abclocalpartner_option_partner_client_secret'))
+	) {
+		$apiEndpoint = get_option('abclocalpartner_option_abc_url');
+		$clientId = get_option('abclocalpartner_option_partner_client_id');
+		$clientSecret = get_option('abclocalpartner_option_partner_client_secret');
 
-		if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) && ! empty( get_option( 'abclocalpartner_option_partner_secret' ) ) ) {
-			wp_remote_post( get_option( 'abclocalpartner_option_abc_url' ), [
-				'body'    => $postJson,
-				'headers' => [
-					'Authorization' => 'Bearer ' . get_option( 'abclocalpartner_option_partner_secret' ),
-				]
-			] );
-		} else if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) ) {
-			wp_remote_post( get_option( 'abclocalpartner_option_abc_url' ), [
-					'body' => $postJson
-				]
-			);
+		if (get_post_status($postid) == 'publish' ) {
+			$post     = get_post($postid);
+			$postJson = wp_json_encode( $post );
+
+			$bearerToken= '';
+
+			if (empty(get_option('abclocalpartner_option_access_token'))) {
+				$bearerToken = get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret);
+				update_option('abclocalpartner_option_access_token', $bearerToken);
+			}
+
+			post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken);
 		}
-
-		$to      = 'elmar@angrybytes.com';
-		$subject = 'Test bericht vanuit Wordpress';
-		$body    = $post;
-		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
-
-		wp_mail( $to, $subject, $body, $headers );
 	}
 }
 
