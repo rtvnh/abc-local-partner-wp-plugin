@@ -202,7 +202,7 @@ function get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret) {
 function post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken, $partnerName, $isRetry) {
 	$response = wp_remote_post($apiEndpoint . '/partner/article', [
 		'body'    => [
-			'partner' => $partnerName . 'dfd',
+			'partner' => $partnerName,
 			'content' => $postJson,
 		],
 		'headers' => [
