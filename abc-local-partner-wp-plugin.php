@@ -199,7 +199,9 @@ function get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret) {
 /*
  * POST Article to ABC Manager
  */
-function post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken, $partnerName, $isRetry) {
+function post_article_to_abc_manager($post, $apiEndpoint, $bearerToken, $partnerName, $isRetry) {
+	$postJson = wp_json_encode($post);
+
 	$response = wp_remote_post($apiEndpoint . '/partner/article', [
 		'body'    => [
 			'partner' => $partnerName,
@@ -241,19 +243,18 @@ function abclocalpartner_post_to_abc($postid) {
 
 		if (get_post_status($postid) == 'publish' ) {
 			$post = get_post($postid);
-			$postJson = wp_json_encode($post);
 
 			if (empty($bearerToken)) {
 				$bearerToken = get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret);
 				update_option('abclocalpartner_option_access_token', $bearerToken);
 			}
 
-			$isPostedToAbcManager = post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken, $partnerName, false);
+			$isPostedToAbcManager = post_article_to_abc_manager($post, $apiEndpoint, $bearerToken, $partnerName, false);
 
 			if ($isPostedToAbcManager === false) {
 				$bearerToken = get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret);
 				update_option('abclocalpartner_option_access_token', $bearerToken);
-				post_article_to_abc_manager($postJson, $apiEndpoint, $bearerToken, $partnerName, true);
+				post_article_to_abc_manager($post, $apiEndpoint, $bearerToken, $partnerName, true);
 			};
 		}
 	}
