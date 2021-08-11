@@ -263,10 +263,10 @@ function abclocalpartner_post_to_abc($postid) {
 	}
 }
 
-add_action( 'save_post', 'abclocalpartner_post_to_abc' );
+add_action('save_post', 'abclocalpartner_post_to_abc');
 
-function prefix_add_source_tag( $tags, $context ) {
-    if ( 'post' === $context ) {
+function prefix_add_source_tag($tags, $context) {
+    if ('post' === $context) {
         $tags['iframe'] = array(
             'src'    => true,
             'srcdoc' => true,
@@ -277,4 +277,4 @@ function prefix_add_source_tag( $tags, $context ) {
     return $tags;
 }
 
-add_filter( 'wp_kses_allowed_html', 'prefix_add_source_tag', 10, 2 );
+add_filter('wp_kses_allowed_html', 'prefix_add_source_tag', 10, 2);
