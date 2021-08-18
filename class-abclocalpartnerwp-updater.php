@@ -65,7 +65,7 @@ class AbcLocalPartnerWp_Updater {
 		$this->file = $file;
 
 		// Postpone the final plugin properties until "admin_init" is fired. This ensures that "get_plugin_data" is available.
-		add_action( 'admin_init', [ $this, 'set_plugin_properties' ] );
+		add_action( 'admin_init', array( $this, 'set_plugin_properties' ) );
 	}
 
 	/**
@@ -109,7 +109,7 @@ class AbcLocalPartnerWp_Updater {
 			);
 
 			// If we have a valid response.
-			if( is_array( $response ) ) {
+			if ( is_array( $response ) ) {
 				// Store the latest release.
 				$this->latest_version = current( $response );
 			}
@@ -134,27 +134,28 @@ class AbcLocalPartnerWp_Updater {
 	 */
 	public function modify_transient( $transient ) {
 		// Did WordPress check for updates?
-		if (property_exists($transient, 'checked') && $checked = $transient->checked) {
+		if ( property_exists( $transient, 'checked' ) && $checked = $transient->checked ) {
 			// Fetch the latest plugin version.
 			$this->get_latest_plugin_version();
 
 			// Compare with our current version.
 			$out_of_date = version_compare(
 				(string) $this->latest_version['tag_name'],
-				$checked[$this->basename ], 'gt'
+				$checked[ $this->basename ],
+				'gt'
 			);
 
 			if ( $out_of_date ) {
 				// Our plugin is out of date, setup our plugin information.
-				$new_files	= $this->latest_version['zipball_url'];
-				$slug		= current( explode( '/', $this->basename ) );
+				$new_files = $this->latest_version['zipball_url'];
+				$slug      = current( explode( '/', $this->basename ) );
 
-				$plugin = [
-					'url'			=> $this->plugin['PluginURI'],
-					'slug'			=> $slug,
-					'package'		=> $new_files,
-					'new_version'	=> (string) $this->latest_version['tag_name']
-				];
+				$plugin = array(
+					'url'         => $this->plugin['PluginURI'],
+					'slug'        => $slug,
+					'package'     => $new_files,
+					'new_version' => (string) $this->latest_version['tag_name'],
+				);
 
 				// Modify the transient with our updated plugin information.
 				$transient->response[ $this->basename ] = (object) $plugin;
@@ -165,7 +166,7 @@ class AbcLocalPartnerWp_Updater {
 	}
 
 	/**
-	 * Provide WordPress plugin popup with infromation about our plugin.
+	 * Provide WordPress plugin popup with information about our plugin.
 	 *
 	 * @param mixed $result
 	 * @param mixed $args
@@ -178,26 +179,26 @@ class AbcLocalPartnerWp_Updater {
 		}
 
 		// Check if the slug matches our plugin.
-		if (!empty($args->slug) && $args->slug === current(explode('/', $this->basename))) {
+		if ( ! empty( $args->slug ) && $args->slug === current( explode( '/', $this->basename ) ) ) {
 			$this->get_latest_plugin_version();
 
-			$plugin = [
-				'name'				=> $this->plugin['Name'],
-				'slug'				=> $this->basename,
-				'requires'			=> '5.3',
-				'tested'			=> '5.4',
-				'version'			=> $this->latest_version['tag_name'],
-				'author'			=> $this->plugin['AuthorName'],
-				'author_profile'	=> $this->plugin['AuthorURI'],
-				'last_updated'		=> $this->latest_version['published_at'],
-				'homepage'			=> $this->plugin['PluginURI'],
-				'short_description'	=> $this->plugin['Description'],
-				'sections'			=> [
-					'Description'	=> $this->plugin['Description'],
-					'Updates'		=> $this->latest_version['body'],
-				],
-				'download_link'		=> $this->latest_version['zipball_url']
-			];
+			$plugin = array(
+				'name'              => $this->plugin['Name'],
+				'slug'              => $this->basename,
+				'requires'          => '5.3',
+				'tested'            => '5.4',
+				'version'           => $this->latest_version['tag_name'],
+				'author'            => $this->plugin['AuthorName'],
+				'author_profile'    => $this->plugin['AuthorURI'],
+				'last_updated'      => $this->latest_version['published_at'],
+				'homepage'          => $this->plugin['PluginURI'],
+				'short_description' => $this->plugin['Description'],
+				'sections'          => array(
+					'Description' => $this->plugin['Description'],
+					'Updates'     => $this->latest_version['body'],
+				),
+				'download_link'     => $this->latest_version['zipball_url'],
+			);
 
 			// Return our plugin formation.
 			return (object) $plugin;
@@ -210,7 +211,7 @@ class AbcLocalPartnerWp_Updater {
 	/**
 	 * Move and reactive our plugin after installation.
 	 *
-	 * @param bool $response
+	 * @param bool  $response
 	 * @param array $hook_extra
 	 * @param array $result
 	 *
