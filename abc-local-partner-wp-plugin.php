@@ -35,7 +35,7 @@ $updater->initialize();
 /**
  * Register our plugin settings.
  */
-function abclocalpartner_register_settings() {
+function abclocalpartner_register_settings(): void {
 	add_option( 'abclocalpartner_option_abc_url' );
 	add_option( 'abclocalpartner_option_partner_name' );
 	add_option( 'abclocalpartner_option_partner_client_id' );
@@ -43,28 +43,23 @@ function abclocalpartner_register_settings() {
 	add_option( 'abclocalpartner_option_access_token' );
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_abc_url',
-		'abclocalpartner_callback'
+		'abclocalpartner_option_abc_url'
 	);
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_partner_name',
-		'abclocalpartner_callback'
+		'abclocalpartner_option_partner_name'
 	);
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_partner_client_id',
-		'abclocalpartner_callback'
+		'abclocalpartner_option_partner_client_id'
 	);
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_partner_client_secret',
-		'abclocalpartner_callback'
+		'abclocalpartner_option_partner_client_secret'
 	);
 	register_setting(
 		'abclocalpartner_options_group',
-		'abclocalpartner_option_access_token',
-		'abclocalpartner_callback'
+		'abclocalpartner_option_access_token'
 	);
 }
 
@@ -73,7 +68,7 @@ add_action( 'admin_init', 'abclocalpartner_register_settings' );
 /**
  * Register the options page for our plugin.
  */
-function abclocalpartner_register_options_page() {
+function abclocalpartner_register_options_page(): void {
 	add_options_page( 'ABC Manager - Connect', 'ABC Manager', 'manage_options', 'abclocalpartner', 'abclocalpartner_options_page' );
 }
 
@@ -82,7 +77,7 @@ add_action( 'admin_menu', 'abclocalpartner_register_options_page' );
 /**
  * Generate the options page for our plugin.
  */
-function abclocalpartner_options_page() {
+function abclocalpartner_options_page(): void {
 	?>
 	<div>
 		<h1>RTV NH/AT5 - ABC Manager</h1>
@@ -206,20 +201,33 @@ function get_abc_bearer_token( string $api_endpoint, string $client_id, string $
 			),
 		)
 	);
-	$response     = json_decode( $raw_response['body'], true );
 
-	return $response['access_token'];
+	$response = null;
+
+	if ( is_array( $raw_response ) ) {
+		try {
+			$data = json_decode( $raw_response['body'], true, 512, JSON_THROW_ON_ERROR );
+
+			$response = $data['access_token'];
+		} catch ( Exception $e ) {
+			// TODO Handle exception.
+			$response = null;
+		}
+	}
+	// TODO handle failed response.
+
+	return $response;
 }
 
 /**
  * Post an article to ABC Manager.
  *
- * @param WP_Post $post             The WordPress post instance.
- * @param array   $post_galleries   A list of galleries from the post content.
- * @param string  $api_endpoint     The API endpoint to send the WordPress post to.
- * @param string  $bearer_token     A bearer token for API authentication.
- * @param string  $partner_name     The partner's name.
- * @param bool    $is_retry         Is this a retry of a previously failed API request.
+ * @param WP_Post  $post             The WordPress post instance.
+ * @param string[] $post_galleries   A list of galleries from the post content.
+ * @param string   $api_endpoint     The API endpoint to send the WordPress post to.
+ * @param string   $bearer_token     A bearer token for API authentication.
+ * @param string   $partner_name     The partner's name.
+ * @param bool     $is_retry         Is this a retry of a previously failed API request.
  *
  * @return bool
  */
@@ -230,7 +238,7 @@ function post_article_to_abc_manager(
 		string $bearer_token,
 		string $partner_name,
 		bool $is_retry
-) {
+): bool {
 	$post_json      = wp_json_encode( $post );
 	$galleries_json = wp_json_encode( $post_galleries );
 
@@ -247,6 +255,10 @@ function post_article_to_abc_manager(
 			),
 		)
 	);
+
+	if ( $response instanceof WP_Error ) {
+		return false;
+	}
 
 	if ( 'Partner not authorized.' === $response['body'] ) {
 		// TODO add an error message: Partner not authorized make sure that the partner name in the settings is correct.
@@ -268,7 +280,7 @@ function post_article_to_abc_manager(
  *
  * @param int $post_id The WordPress post ID.
  */
-function abclocalpartner_post_to_abc( int $post_id ) {
+function abclocalpartner_post_to_abc( int $post_id ): void {
 	// TODO accept all params from save_post hook (int $post_id, WP_Post $post, bool $update).
 	if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_id' ) ) &&
@@ -283,6 +295,11 @@ function abclocalpartner_post_to_abc( int $post_id ) {
 		if ( get_post_status( $post_id ) === 'publish' ) {
 			$post           = get_post( $post_id );
 			$post_galleries = get_post_galleries( $post_id );
+
+			if ( ! $post instanceof WP_Post ) {
+				// TODO handle non-existing post.
+				return;
+			}
 
 			if ( empty( $bearer_token ) ) {
 				$bearer_token = get_abc_bearer_token( $api_endpoint, $client_id, $client_secret );
@@ -320,12 +337,12 @@ add_action( 'save_post', 'abclocalpartner_post_to_abc' );
 /**
  * Allow iframe HTML tags.
  *
- * @param array  $tags    A list of HTML tags.
- * @param string $context The context to judge allowed tags by.
+ * @param string[] $tags    A list of HTML tags.
+ * @param string   $context The context to judge allowed tags by.
  *
- * @return array
+ * @return mixed[]
  */
-function prefix_add_source_tag( array $tags, string $context ) {
+function prefix_add_source_tag( array $tags, string $context ): array {
 	if ( 'post' === $context ) {
 		$tags['iframe'] = array(
 			'src'    => true,
