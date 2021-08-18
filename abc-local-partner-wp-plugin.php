@@ -18,7 +18,7 @@
  * Version:             0.8.1
  * Author:              AngryBytes B.V.
  * Author URI:          https://angrybytes.com
- * License:             MIT
+ * License:             GPL-2.0+
  * Text Domain:         abclocalpartner
  * Requires at least:   5.7
  * Requires PHP:        7.3
