@@ -1,22 +1,31 @@
 <?php
-
 /**
- * @package AbcLocalPartnerWp
+ * The plugin bootstrap file
  *
- * Plugin Name			ABC Manager - Local Partner
- * Plugin URI:			https://github.com/rtvnh/abc-local-partner-wp-plugin
- * Description:			WordPress Plugin to post new updates to the ABC Manager of NH/AT5
- * Version:				0.8.1
- * Author:				AngryBytes B.V.
- * Author URI:			https://angrybytes.com
- * License:				MIT
- * Text Domain:			abclocalpartner
- * Requires at least:	5.7
- * Requires PHP:		7.3
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and defines a function
+ * that starts the plugin.
+ *
+ * @link              https://github.com/rtvnh/abc-local-partner-wp-plugin
+ * @since             0.4.0
+ * @package           Plugin_ABC_Manager_Local_Partner
+ *
+ * @wordpress-plugin
+ * Plugin Name          ABC Manager - Local Partner
+ * Plugin URI:          https://github.com/rtvnh/abc-local-partner-wp-plugin
+ * Description:         WordPress Plugin to post new updates to the ABC Manager of NH/AT5
+ * Version:             0.8.1
+ * Author:              AngryBytes B.V.
+ * Author URI:          https://angrybytes.com
+ * License:             MIT
+ * Text Domain:         abclocalpartner
+ * Requires at least:   5.7
+ * Requires PHP:        7.3
  */
 
 // Configure our plugin updater.
-include_once plugin_dir_path( __FILE__ ) . '/updater.php';
+require_once plugin_dir_path( __FILE__ ) . '/class-abclocalpartnerwp-updater.php';
 
 $updater = new AbcLocalPartnerWp_Updater( __FILE__ );
 $updater->set_username( 'rtvnh' );
@@ -78,14 +87,12 @@ function abclocalpartner_options_page() {
 	<div>
 		<h1>RTV NH/AT5 - ABC Manager</h1>
 		<div>
-			<img src="<?php echo plugin_dir_url( __FILE__ ) ?>/assets/images/nh-at5-logo.png" height="64" width="64"
-				 alt="NH"/>
+			<img src="<?php echo esc_url( plugin_dir_url( __FILE__ ) ); ?>/assets/images/nh-at5-logo.png" height="64" width="64" alt="NH"/>
 		</div>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'abclocalpartner_options_group' ); ?>
 			<h2>ABC Manager Options</h2>
-			<p>Please adjust the settings, for connection with ABC. If your not sure to know which codes are required,
-			   please read the docs.</p>
+			<p>Please adjust the settings, for connection with ABC. If your not sure to know which codes are required, please read the docs.</p>
 			<table class="form-table" role="presentation">
 				<tbody>
 				<tr>
@@ -94,8 +101,8 @@ function abclocalpartner_options_page() {
 					</th>
 					<td>
 						<input type="text" id="abclocalpartner_option_abc_url" name="abclocalpartner_option_abc_url"
-							   class="regular-text"
-							   value="<?php echo get_option( 'abclocalpartner_option_abc_url' ); ?>"/>
+							class="regular-text"
+							value="<?php echo esc_url( get_option( 'abclocalpartner_option_abc_url' ) ); ?>"/>
 					</td>
 				</tr>
 				<tr>
@@ -104,8 +111,8 @@ function abclocalpartner_options_page() {
 					</th>
 					<td>
 						<input type="text" id="abclocalpartner_option_partner_name"
-							   name="abclocalpartner_option_partner_name" class="regular-text"
-							   value="<?php echo get_option( 'abclocalpartner_option_partner_name' ); ?>"/>
+							name="abclocalpartner_option_partner_name" class="regular-text"
+							value="<?php echo esc_attr( get_option( 'abclocalpartner_option_partner_name' ) ); ?>"/>
 					</td>
 				</tr>
 				<tr>
@@ -114,8 +121,8 @@ function abclocalpartner_options_page() {
 					</th>
 					<td>
 						<input type="text" id="abclocalpartner_option_partner_client_id"
-							   name="abclocalpartner_option_partner_client_id" class="regular-text"
-							   value="<?php echo get_option( 'abclocalpartner_option_partner_client_id' ); ?>"/>
+							name="abclocalpartner_option_partner_client_id" class="regular-text"
+							value="<?php echo esc_attr( get_option( 'abclocalpartner_option_partner_client_id' ) ); ?>"/>
 					</td>
 				</tr>
 				<tr>
@@ -124,8 +131,8 @@ function abclocalpartner_options_page() {
 					</th>
 					<td>
 						<input type="text" id="abclocalpartner_option_partner_client_secret"
-							   name="abclocalpartner_option_partner_client_secret" class="regular-text"
-							   value="<?php echo get_option( 'abclocalpartner_option_partner_client_secret' ); ?>"/>
+							name="abclocalpartner_option_partner_client_secret" class="regular-text"
+							value="<?php echo esc_attr( get_option( 'abclocalpartner_option_partner_client_secret' ) ); ?>"/>
 					</td>
 				</tr>
 				<style type="text/css">
@@ -146,18 +153,18 @@ function abclocalpartner_options_page() {
 				</style>
 				<?php
 				// Are ABC Manager and WordPress connected?
-				$headers = @get_headers( get_option( 'abclocalpartner_option_abc_url' ) );
-				// TODO should attempt to authenticate with ABC Manager
+				$headers = get_headers( get_option( 'abclocalpartner_option_abc_url' ) );
+				// TODO should attempt to authenticate with ABC Manager.
 
-				if ( $headers === false ) {
-					$status	  = 'down';
-					$statusColor = 'red';
-				} else if ( $headers && strpos( $headers[0], '301' ) ) {
-					$status	  = 'down';
-					$statusColor = 'red';
+				if ( false === $headers ) {
+					$status       = 'down';
+					$status_color = 'red';
+				} elseif ( $headers && strpos( $headers[0], '301' ) ) {
+					$status       = 'down';
+					$status_color = 'red';
 				} else {
-					$status	  = 'up';
-					$statusColor = 'green';
+					$status       = 'up';
+					$status_color = 'green';
 				}
 				?>
 				<tr>
@@ -165,7 +172,7 @@ function abclocalpartner_options_page() {
 						Current connection state:
 					</th>
 					<td>
-						<?= $status ?> <span class="status-dot is-<?= $statusColor ?>"></span>
+						<?php echo esc_html( $status ); ?> <span class="status-dot is-<?php echo esc_attr( $status_color ); ?>"></span>
 					</td>
 				</tr>
 				</tbody>
@@ -179,20 +186,27 @@ function abclocalpartner_options_page() {
 /**
  * Get a bearer token from ABC Manager.
  *
+ * @param string $api_endpoint  The API endpoint to send the WordPress post to.
+ * @param string $client_id     The partner's client ID.
+ * @param string $client_secret The partner's client secret.
+ *
  * @return mixed
  */
-function get_abc_bearer_token(string $api_endpoint, string $client_ID, string $client_secret) {
-	$raw_response = wp_remote_post($api_endpoint . '/oauth2/token', [
-		'method' => 'POST',
-		'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
-		'body' => array(
-			'grant_type' => 'client_credentials',
-			'client_id' => $client_ID,
-			'client_secret' => $client_secret,
-			'scope' => 'partners'
+function get_abc_bearer_token( string $api_endpoint, string $client_id, string $client_secret ) {
+	$raw_response = wp_remote_post(
+		$api_endpoint . '/oauth2/token',
+		array(
+			'method'  => 'POST',
+			'headers' => array( 'Content-Type' => 'application/x-www-form-urlencoded' ),
+			'body'    => array(
+				'grant_type'    => 'client_credentials',
+				'client_id'     => $client_id,
+				'client_secret' => $client_secret,
+				'scope'         => 'partners',
+			),
 		)
-	]);
-	$response = json_decode($raw_response['body'], true);
+	);
+	$response     = json_decode( $raw_response['body'], true );
 
 	return $response['access_token'];
 }
@@ -200,36 +214,46 @@ function get_abc_bearer_token(string $api_endpoint, string $client_ID, string $c
 /**
  * Post an article to ABC Manager.
  *
+ * @param WP_Post $post             The WordPress post instance.
+ * @param array   $post_galleries   A list of galleries from the post content.
+ * @param string  $api_endpoint     The API endpoint to send the WordPress post to.
+ * @param string  $bearer_token     A bearer token for API authentication.
+ * @param string  $partner_name     The partner's name.
+ * @param bool    $is_retry         Is this a retry of a previously failed API request.
+ *
  * @return bool
  */
 function post_article_to_abc_manager(
-        WP_Post $post,
-        array $post_galleries,
-        string $api_endpoint,
-        string $bearer_token,
-        string $partner_name,
-        bool $is_retry
+		WP_Post $post,
+		array $post_galleries,
+		string $api_endpoint,
+		string $bearer_token,
+		string $partner_name,
+		bool $is_retry
 ) {
-	$postJson = wp_json_encode($post);
-	$galleriesJson = wp_json_encode($post_galleries);
+	$post_json      = wp_json_encode( $post );
+	$galleries_json = wp_json_encode( $post_galleries );
 
-	$response = wp_remote_post($api_endpoint . '/partner/article', [
-		'body'	=> [
-			'partner' => $partner_name,
-			'content' => $postJson,
-			'galleries' => $galleriesJson,
-		],
-		'headers' => [
-			'Authorization' => 'Bearer ' . $bearer_token,
-		]
-	]);
+	$response = wp_remote_post(
+		$api_endpoint . '/partner/article',
+		array(
+			'body'    => array(
+				'partner'   => $partner_name,
+				'content'   => $post_json,
+				'galleries' => $galleries_json,
+			),
+			'headers' => array(
+				'Authorization' => 'Bearer ' . $bearer_token,
+			),
+		)
+	);
 
-	if ($response['body'] === 'Partner not authorized.') {
+	if ( 'Partner not authorized.' === $response['body'] ) {
 		// TODO add an error message: Partner not authorized make sure that the partner name in the settings is correct.
 		return true;
 	}
-	if ($response['body'] === 'Unauthorized') {
-		if($is_retry) {
+	if ( 'Unauthorized' === $response['body'] ) {
+		if ( $is_retry ) {
 			// TODO add an error message: An error has occurred sending the post to ABC Manager, Make sure the credentials is correct.
 			return true;
 		}
@@ -241,49 +265,70 @@ function post_article_to_abc_manager(
 
 /**
  * Register a hook on "save_post".
+ *
+ * @param int $post_id The WordPress post ID.
  */
-function abclocalpartner_post_to_abc(int $post_ID) { // TODO accept all params from save_post hook (int $post_ID, WP_Post $post, bool $update)
-	if (!empty(get_option('abclocalpartner_option_abc_url')) &&
-		!empty(get_option('abclocalpartner_option_partner_client_id')) &&
-		!empty(get_option('abclocalpartner_option_partner_client_secret'))
+function abclocalpartner_post_to_abc( int $post_id ) {
+	// TODO accept all params from save_post hook (int $post_id, WP_Post $post, bool $update).
+	if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) &&
+		! empty( get_option( 'abclocalpartner_option_partner_client_id' ) ) &&
+		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
 	) {
-		$apiEndpoint = get_option('abclocalpartner_option_abc_url');
-		$partnerName = get_option('abclocalpartner_option_partner_name');
-		$clientId = get_option('abclocalpartner_option_partner_client_id');
-		$clientSecret = get_option('abclocalpartner_option_partner_client_secret');
-		$bearerToken= get_option('abclocalpartner_option_access_token');
+		$api_endpoint  = get_option( 'abclocalpartner_option_abc_url' );
+		$partner_name  = get_option( 'abclocalpartner_option_partner_name' );
+		$client_id     = get_option( 'abclocalpartner_option_partner_client_id' );
+		$client_secret = get_option( 'abclocalpartner_option_partner_client_secret' );
+		$bearer_token  = get_option( 'abclocalpartner_option_access_token' );
 
-		if (get_post_status($post_ID) == 'publish' ) {
-			$post = get_post($post_ID);
-			$postGalleries = get_post_galleries($post_ID);
+		if ( get_post_status( $post_id ) === 'publish' ) {
+			$post           = get_post( $post_id );
+			$post_galleries = get_post_galleries( $post_id );
 
-			if (empty($bearerToken)) {
-				$bearerToken = get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret);
-				update_option('abclocalpartner_option_access_token', $bearerToken);
+			if ( empty( $bearer_token ) ) {
+				$bearer_token = get_abc_bearer_token( $api_endpoint, $client_id, $client_secret );
+				update_option( 'abclocalpartner_option_access_token', $bearer_token );
 			}
 
-			$isPostedToAbcManager = post_article_to_abc_manager($post, $postGalleries, $apiEndpoint, $bearerToken, $partnerName, false);
+			$success = post_article_to_abc_manager(
+				$post,
+				$post_galleries,
+				$api_endpoint,
+				$bearer_token,
+				$partner_name,
+				false
+			);
 
-			if ($isPostedToAbcManager === false) {
-				$bearerToken = get_abc_bearer_token($apiEndpoint, $clientId, $clientSecret);
-				update_option('abclocalpartner_option_access_token', $bearerToken);
-				post_article_to_abc_manager($post, $postGalleries, $apiEndpoint, $bearerToken, $partnerName, true);
+			// TODO remove? This seems unnecessary.
+			if ( false === $success ) {
+				$bearer_token = get_abc_bearer_token( $api_endpoint, $client_id, $client_secret );
+				update_option( 'abclocalpartner_option_access_token', $bearer_token );
+				post_article_to_abc_manager(
+					$post,
+					$post_galleries,
+					$api_endpoint,
+					$bearer_token,
+					$partner_name,
+					true
+				);
 			}
 		}
 	}
 }
 
-add_action('save_post', 'abclocalpartner_post_to_abc');
+add_action( 'save_post', 'abclocalpartner_post_to_abc' );
 
 /**
  * Allow iframe HTML tags.
  *
+ * @param array  $tags    A list of HTML tags.
+ * @param string $context The context to judge allowed tags by.
+ *
  * @return array
  */
-function prefix_add_source_tag(array $tags, string $context) {
-	if ('post' === $context) {
+function prefix_add_source_tag( array $tags, string $context ) {
+	if ( 'post' === $context ) {
 		$tags['iframe'] = array(
-			'src'	=> true,
+			'src'    => true,
 			'srcdoc' => true,
 			'width'  => true,
 			'height' => true,
@@ -292,4 +337,4 @@ function prefix_add_source_tag(array $tags, string $context) {
 	return $tags;
 }
 
-add_filter('wp_kses_allowed_html', 'prefix_add_source_tag', 10, 2);
+add_filter( 'wp_kses_allowed_html', 'prefix_add_source_tag', 10, 2 );

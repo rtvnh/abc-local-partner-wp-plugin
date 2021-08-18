@@ -1,4 +1,12 @@
 <?php
+/**
+ * The plugin updater. file
+ *
+ * This file is read by WordPress to automatic update this plugin with the latest version available on GitHub.
+ *
+ * @package Plugin_ABC_Manager_Local_Partner
+ * @since   0.4.0
+ */
 
 /**
  * Updater class to deploy the WordPress ABC Local Partner plugin using GitHub.
@@ -60,6 +68,8 @@ class AbcLocalPartnerWp_Updater {
 
 	/**
 	 * Initiate plugin properties.
+	 *
+	 * @param string $file The plugin's file path.
 	 */
 	public function __construct( string $file ) {
 		$this->file = $file;
@@ -79,6 +89,8 @@ class AbcLocalPartnerWp_Updater {
 
 	/**
 	 * Set the GitHub username.
+	 *
+	 * @param string $username The GitHub username.
 	 */
 	public function set_username( string $username ) {
 		$this->username = $username;
@@ -86,6 +98,8 @@ class AbcLocalPartnerWp_Updater {
 
 	/**
 	 * Set the GitHub repository.
+	 *
+	 * @param string $repository THe GitHub repository.
 	 */
 	public function set_repository( string $repository ) {
 		$this->repository = $repository;
@@ -128,20 +142,20 @@ class AbcLocalPartnerWp_Updater {
 	/**
 	 * Modify a transient with our plugin information.
 	 *
-	 * @param object $transient
+	 * @param object $transient The transient object.
 	 *
 	 * @return mixed
 	 */
 	public function modify_transient( $transient ) {
 		// Did WordPress check for updates?
-		if ( property_exists( $transient, 'checked' ) && $checked = $transient->checked ) {
+		if ( property_exists( $transient, 'checked' ) && $transient->checked ) {
 			// Fetch the latest plugin version.
 			$this->get_latest_plugin_version();
 
 			// Compare with our current version.
 			$out_of_date = version_compare(
 				(string) $this->latest_version['tag_name'],
-				$checked[ $this->basename ],
+				$transient->checked[ $this->basename ],
 				'gt'
 			);
 
@@ -168,18 +182,19 @@ class AbcLocalPartnerWp_Updater {
 	/**
 	 * Provide WordPress plugin popup with information about our plugin.
 	 *
-	 * @param mixed $result
-	 * @param mixed $args
+	 * @param false|object|array $result    The result object or array.
+	 * @param string             $action                The type of information being requested from the Plugin Installation API.
+	 * @param object             $args                  Plugin API arguments.
 	 *
 	 * @return false|mixed|object
 	 */
-	public function plugin_popup( $result, string $action, $args ) {
-		if ( $action !== 'plugin_information' ) {
+	public function plugin_popup( $result, string $action, object $args ) {
+		if ( 'plugin_information' !== $action ) {
 			return false;
 		}
 
 		// Check if the slug matches our plugin.
-		if ( ! empty( $args->slug ) && $args->slug === current( explode( '/', $this->basename ) ) ) {
+		if ( ! empty( $args->slug ) && current( explode( '/', $this->basename ) ) === $args->slug ) {
 			$this->get_latest_plugin_version();
 
 			$plugin = array(
@@ -211,13 +226,13 @@ class AbcLocalPartnerWp_Updater {
 	/**
 	 * Move and reactive our plugin after installation.
 	 *
-	 * @param bool  $response
-	 * @param array $hook_extra
-	 * @param array $result
+	 * @param bool  $response       The installation response.
+	 * @param array $hook_extra     Extra arguments passed to hooked filters.
+	 * @param array $result         Installation result data.
 	 *
 	 * @return array
 	 */
-	public function after_install( $response, $hook_extra, $result ) {
+	public function after_install( bool $response, array $hook_extra, array $result ) {
 		global $wp_filesystem;
 
 		// Move our updated plugin files to the plugin directory.
