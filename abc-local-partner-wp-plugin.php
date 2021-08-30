@@ -12,7 +12,7 @@
  * @package           Plugin_ABC_Manager_Local_Partner
  *
  * @wordpress-plugin
- * Plugin Name          ABC Manager - Local Partner
+ * Plugin Name:         ABC Manager - Local Partner
  * Plugin URI:          https://github.com/rtvnh/abc-local-partner-wp-plugin
  * Description:         WordPress Plugin to post new updates to the ABC Manager of NH/AT5
  * Version:             0.8.1
