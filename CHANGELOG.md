@@ -1,30 +1,28 @@
-# Change Log
+# Changelog
 
-All notable changes to this project will be documented in this file.
+## 0.8.1
+* Added a `composer.json` with scripts to check code quality, using tools like PHPStan and PHP CodeSniffer.
+  * Run `composer phpcheck` to check the code.
+  * Run `composer phpfix` to attempt to automatically resolve any issue.
+* Performed code cleanup.
 
-## [0.7.1] - 2021-07-13
-Added an oauth bearer token to POST to ABC Manager.
+# Upgrading
+* Run `composer install` to install the above mentioned tools.
 
-## [0.7] - 2021-07-05
-Different statuses check if the URL is valid.
+## 0.8.0
+* Updated API authentication with OAuth tokens.
+* Allow iframe HTML tags.
 
-## [0.6.3] - 2021-06-07
+## 0.7.0
+* Added an API connection status indicator to the setting page.
 
-### Changed
-Credentials to private repository are no longer needed, the functionality for that is disabled.
+## 0.6.3
+* Removed dead code.
 
-## [0.6.2] - 2021-06-03
+## 0.6.2
+* Added Dutch documentation.
+* Updated the README.md.
 
-### Changed
-
-ReadMe with link to [Dutch](https://github.com/rtvnh/abc-local-partner-wp-plugin/blob/develop/docs/nl.md) documentation.
-
-### Added
-Dutch documentation
-
-## [0.6.1] - 2021-06-03
-
-### Changed
-
-GitHub Access Token is now optional, since the repository is publicly accessible. Also, the README is updated so dev's
-know what to do when installing the plugin.
+## 0.6.1
+* Removed GitHub Access Token authentication, the repository is now publicly accessible.
+* Updated the README.md with installation steps.
