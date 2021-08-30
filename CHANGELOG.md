@@ -1,7 +1,13 @@
 # Changelog
 
 ## 0.8.1
-* T.B.D.
+* Added a `composer.json` with scripts to check code quality, using tools like PHPStan and PHP CodeSniffer.
+  * Run `composer phpcheck` to check the code.
+  * Run `composer phpfix` to attempt to automatically resolve any issue.
+* Performed code cleanup.
+
+# Upgrading
+* Run `composer install` to install the above mentioned tools.
 
 ## 0.8.0
 * Updated API authentication with OAuth tokens.
