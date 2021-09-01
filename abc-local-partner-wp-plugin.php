@@ -188,11 +188,13 @@ function abclocalpartner_options_page(): void {
  * @return mixed
  */
 function get_abc_bearer_token( string $api_endpoint, string $client_id, string $client_secret ) {
+	$host_header = wp_get_environment_type() === 'local' ? array( 'Host' => 'partner.test' ) : array();
+
 	$raw_response = wp_remote_post(
 		$api_endpoint . '/oauth2/token',
 		array(
 			'method'  => 'POST',
-			'headers' => array( 'Content-Type' => 'application/x-www-form-urlencoded' ),
+			'headers' => array_merge( $host_header, array( 'Content-Type' => 'application/x-www-form-urlencoded' ) ),
 			'body'    => array(
 				'grant_type'    => 'client_credentials',
 				'client_id'     => $client_id,
@@ -241,6 +243,7 @@ function post_article_to_abc_manager(
 ): bool {
 	$post_json      = wp_json_encode( $post );
 	$galleries_json = wp_json_encode( $post_galleries );
+	$host_header    = wp_get_environment_type() === 'local' ? array( 'Host' => 'partner.test' ) : array();
 
 	$response = wp_remote_post(
 		$api_endpoint . '/partner/article',
@@ -250,9 +253,7 @@ function post_article_to_abc_manager(
 				'content'   => $post_json,
 				'galleries' => $galleries_json,
 			),
-			'headers' => array(
-				'Authorization' => 'Bearer ' . $bearer_token,
-			),
+			'headers' => array_merge( $host_header, array( 'Authorization' => 'Bearer ' . $bearer_token ) ),
 		)
 	);
 
