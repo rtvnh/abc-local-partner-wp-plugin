@@ -296,8 +296,6 @@ function get_environment_headers(): array {
  * @return bool
  */
 function check_abc_status(): bool {
-	$host_header = wp_get_environment_type() === 'local' ? array( 'Host' => 'partner.test' ) : array();
-
 	$api_endpoint = get_option( 'abclocalpartner_option_abc_url' );
 	$partner_name = get_option( 'abclocalpartner_option_partner_name' );
 
@@ -305,7 +303,7 @@ function check_abc_status(): bool {
 		$response = wp_remote_get(
 			sprintf( '%s/partner/article?partner=%s', $api_endpoint, $partner_name ),
 			array(
-				'headers' => $host_header,
+				'headers' => get_environment_headers(),
 			)
 		);
 
@@ -364,7 +362,6 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries ): bo
 	}
 
 	if ( 'Partner not authorized.' === $response['body'] ) {
-		// TODO add an error message: Partner not authorized make sure that the partner name in the settings is correct.
 		return true;
 	}
 	if ( 'Unauthorized' === $response['body'] ) {
