@@ -34,13 +34,13 @@ Om een werkende plugin te krijgen, dient deze geactiveerd te worden in het plug-
 ![Plugin](./images/plugin.png)
 
 In het configuratiescherm van de plugin zijn er 2 invoer velden die ingevuld moeten worden voor communicatie met de ABC
-Manager omgeving van RTV NH. Zonder deze gegevens werkt de plugin niet.
+Manager omgeving van NH Nieuws. Zonder deze gegevens werkt de plugin niet.
 
 ### ABC Manager URL API
 
-Om WordPress met ABC Manager te laten communiceren wordt er een request uitgevoerd naar de ABC Manager omgeving van RTV
-NH, deze gegevens worden over het algemeen nooit gewijzigd. De URL wordt meegegeven bij het installeren van de
-applicatie door RTV NH of Angry Bytes.
+Om WordPress met ABC Manager te laten communiceren wordt er een request uitgevoerd naar de ABC Manager omgeving van
+NH Nieuws, deze gegevens worden over het algemeen nooit gewijzigd. De URL wordt meegegeven bij het installeren van de
+applicatie door NH Media of Angry Bytes.
 
 ### Partner Token
 
