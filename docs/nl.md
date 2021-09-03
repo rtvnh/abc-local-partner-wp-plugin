@@ -62,6 +62,6 @@ te worden gedaan.
 ### Fouten/Problemen
 
 Mocht u niet uit deze documentatie komen, en heeft u hulp nodig? Neem dan alstublieft contact op
-met [Angry Bytes](https://angrybytes.com) of met [RTV NH](https://www.nhnieuws.nl/contact).
+met [Angry Bytes](https://angrybytes.com) of met [NH Nieuws](https://www.nhnieuws.nl/contact).
 
-&copy; RTV NH
+&copy;  NH Media
