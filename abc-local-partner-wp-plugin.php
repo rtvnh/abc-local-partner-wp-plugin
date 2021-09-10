@@ -377,6 +377,10 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries ): bo
  * @param int $post_id The WordPress post ID.
  */
 function abclocalpartner_post_to_abc( int $post_id ): void {
+    if ( defined('REST_REQUEST') && REST_REQUEST && isset($_GET['abc']) ) {
+        return;
+    }
+
 	if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_id' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
