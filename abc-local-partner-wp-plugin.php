@@ -15,7 +15,7 @@
  * Plugin Name:         ABC Manager - Local Partner
  * Plugin URI:          https://github.com/rtvnh/abc-local-partner-wp-plugin
  * Description:         WordPress Plugin to post new updates to the ABC Manager of NH/AT5
- * Version:             0.8.2
+ * Version:             0.8.4
  * Author:              AngryBytes B.V.
  * Author URI:          https://angrybytes.com
  * License:             GPL-2.0+
@@ -331,10 +331,11 @@ function check_abc_status(): bool {
  *
  * @param WP_Post  $post             The WordPress post instance.
  * @param string[] $post_galleries   A list of galleries from the post content.
+ * @param string   $post_featured    An URL for the featured image in the post.
  *
  * @return bool
  */
-function post_article_to_abc_manager( WP_Post $post, array $post_galleries ): bool {
+function post_article_to_abc_manager( WP_Post $post, array $post_galleries, string $post_featured ): bool {
 	$post_json      = wp_json_encode( $post );
 	$galleries_json = wp_json_encode( $post_galleries );
 	$api_endpoint   = get_option( 'abclocalpartner_option_abc_url' );
@@ -351,6 +352,7 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries ): bo
 			'body'    => array(
 				'partner'   => $partner_name,
 				'content'   => $post_json,
+				'featured'  => $post_featured,
 				'galleries' => $galleries_json,
 			),
 			'headers' => array_merge( get_environment_headers(), array( 'Authorization' => 'Bearer ' . $bearer_token ) ),
@@ -374,29 +376,26 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries ): bo
 /**
  * Register a hook on "save_post".
  *
- * @param int $post_id The WordPress post ID.
+ * @param WP_Post $post The WordPress post.
  */
-function abclocalpartner_post_to_abc( int $post_id ): void {
-    if ( defined('REST_REQUEST') && REST_REQUEST && isset($_GET['abc']) ) {
-        return;
-    }
-
+function abclocalpartner_post_to_abc( WP_Post $post ): void {
 	if ( ! empty( get_option( 'abclocalpartner_option_abc_url' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_id' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
 	) {
-		if ( get_post_status( $post_id ) === 'publish' ) {
-			$post           = get_post( $post_id );
-			$post_galleries = get_post_galleries( $post_id );
+		if ( get_post_status( $post ) === 'publish' ) {
+			$post_galleries = get_post_galleries( $post );
+			$post_featured  = get_the_post_thumbnail_url( $post );
 
-			if ( ! $post instanceof WP_Post ) {
-				return;
+			if ( is_bool( $post_featured ) ) {
+				$post_featured = '';
 			}
 
 			global $abc_post_status;
 			$abc_post_status = post_article_to_abc_manager(
 				$post,
-				$post_galleries
+				$post_galleries,
+				$post_featured
 			);
 
 			// Only works for classic editor.
@@ -448,7 +447,39 @@ function add_abc_notice_after_post_save(): void {
 	<?php
 }
 
-add_action( 'save_post', 'abclocalpartner_post_to_abc' );
+/**
+ * Triggers only on gutenberg save calls
+ *
+ * @param   WP_Post $post WordPress post.
+ */
+function gutenberg_post_to_abc( WP_Post $post ): void {
+	// Prevent save calls from ABC Manager to be also send to ABC Manager back again.
+    // phpcs:ignore
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['abc'] ) ) {
+		return;
+	}
+
+	abclocalpartner_post_to_abc( $post );
+}
+
+/**
+ * Triggers only on classic save calls
+ *
+ * @param   int     $post_id WordPress Post ID.
+ * @param   WP_Post $post    WordPress Post.
+ */
+function classic_post_to_abc( int $post_id, WP_Post $post ): void {
+	// Prevent save calls from gutenberg, because they are using another hook.
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		return;
+	}
+
+	abclocalpartner_post_to_abc( $post );
+}
+
+add_action( 'rest_after_insert_post', 'gutenberg_post_to_abc', 10, 1 );
+add_action( 'save_post', 'classic_post_to_abc', 10, 2 );
+
 
 add_action( 'admin_notices', 'add_abc_notice_after_post_save' );
 
