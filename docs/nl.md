@@ -1,6 +1,6 @@
 # ABC Manager - Lokale Partner - Wordpress Plug-in
 
-Deze plugin zorgt voor een communicatie tussen Wordpress en ABC Manager. ABC Manager is het redactionele systeem van NH Nieuws en AT5
+Deze plugin zorgt voor de communicatie tussen Wordpress en ABC Manager. ABC Manager is het redactionele systeem van NH Nieuws en AT5
 
 ## Installatie
 
