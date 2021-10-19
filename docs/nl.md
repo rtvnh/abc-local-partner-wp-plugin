@@ -18,10 +18,10 @@ gedownloade ZIP bestand selecteren en op `Install Now` klikken.
 
 ## Plugin activeren
 
-Om een werkende plugin te krijgen, dient deze geactiveerd te worden in het plug-ins overzicht.
+Om een werkende plugin te krijgen, dient deze geactiveerd te worden in het plugins overzicht.
 ![Activate plugin](./images/plugins.png)
 
-## Instellingen van de applicatie
+## Instellingen van de plugin
 
 ![Plugin](./images/plugin.png)
 
