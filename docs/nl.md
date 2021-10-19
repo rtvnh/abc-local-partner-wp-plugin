@@ -25,7 +25,7 @@ Om een werkende plugin te krijgen, dient deze geactiveerd te worden in het plugi
 
 ![Plugin](./images/plugin.png)
 
-De instelling van de plugin zijn te vinden via `Settings -> ABC Manager`. De gegevens die hier ingevuld moeten worden
+De instellingen van de plugin zijn te vinden via `Settings -> ABC Manager`. De gegevens die hier ingevuld moeten worden
 heeft u gekregen via uw contactpersoon bij NH Nieuws. Als alles correct is ingevuld zal de ABC Manager status `UP` zijn
 en de Credentials `Valid`
 
