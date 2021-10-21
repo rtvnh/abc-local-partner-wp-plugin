@@ -14,7 +14,7 @@ WordPress Plugin to post new updates to the ABC Manager of NH/AT5
 
 You can download this plugin via the `Code` button and then select `download zip`
 
-![Clone or Download](./images/clone-download.png)
+![Clone or Download](./docs/images/clone-download.png)
 
 To install the plugin into your WordPress environment you go to `Plugins -> Add New -> Upload Plugin`. Here you can
 select the downloaded ZIP file and click `Install Now`
@@ -22,11 +22,11 @@ select the downloaded ZIP file and click `Install Now`
 ## Activate Plugin
 
 To activate the plugin you can go to the plugins overview and select `Activate`
-![Activate plugin](./images/plugins.png)
+![Activate plugin](./docs/images/plugins.png)
 
 ## Plugin settings
 
-![Plugin](./images/plugin.png)
+![Plugin](./docs/images/plugin.png)
 
 You can find the settings of the plugin in `Settings -> ABC Manager`. The values of the settings you have to fill in
 have been given to you by your contact person from NH Nieuws. If you entered the correct credentials the  ABC Manager
