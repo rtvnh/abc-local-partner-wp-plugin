@@ -7,29 +7,48 @@ WordPress Plugin to post new updates to the ABC Manager of NH/AT5
 
 ## Setup
 
-When first setting up the plugin by installing it through WordPress plugin menu, select *Add New*. After that you get
-the dashboard where all the different plugins showed and are publicly accessible WordPress itself, in the header you see
-Add Plugins and next to that stands *Upload Plugin*. After clicking that a section pops up, where you can select a file
-to upload, after downloading this repository you can add that plugin by selecting the downloaded Zip file.
+> This plugin requires you to have the following minimal requirements
+> > PHP: **7.3** | WordPress: **5.7**
 
-If the plugin is being installed, you can find it under Settings > ABC Manager, in here you find a few options:
+### Download and installation
 
-- ABC Manager URL API
-- Partner Token
+You can download this plugin via the `Code` button and then select `download zip`
 
-### ABC Manager URL API
+![Clone or Download](./images/clone-download.png)
 
-For your WordPress environment to communicate between ABC Manager and WordPress it needs a connection between the two
-environments through a URL API, this URL will be provided by RTV NH.
+To install the plugin into your WordPress environment you go to `Plugins -> Add New -> Upload Plugin`. Here you can
+select the downloaded ZIP file and click `Install Now`
 
-### Partner Token
+## Activate Plugin
 
-To validate the communication we use a Partner Token which is provided by oAuth, this simply verifies if it's the
-correct application which communicate with ABC Manager. It's a simple and safe option to communicate. The Partner Token
-is unique and should not be shared with any other but yourself. Otherwise, we can't register which application is
-sending news articles to ABC Manager, so it's safe but also very necessary.
+To activate the plugin you can go to the plugins overview and select `Activate`
+![Activate plugin](./images/plugins.png)
 
-If you filled in the credentials, don't forget to click the *Save Changes* button
+## Plugin settings
+
+![Plugin](./images/plugin.png)
+
+You can find the settings of the plugin in `Settings -> ABC Manager`. The values of the settings you have to fill in
+have been given to you by your contact person from NH Nieuws. If you entered the correct credentials the  ABC Manager
+status should be `UP` and the Credentials should be `Valid`
+
+---
+
+## How it works
+
+Every time you publish and new article or update a published article this article will be send to ABC Manager.
+Upon receipt, the article will be reviewed bij the editors and they will be able to publish the article.
+Image/Video/Audio files will be uploaded in their own system so you don't have to worry about increased network traffic.
+
+If NH Nieuws publishes an article about your region, this article will be automatically send to your WordPress environment.
+Dependable on the settings in ABC Manager the article will get the status `Published` or `Draft`
+
+### Errors
+
+Do you have problems installing the plugin or experience errors in the syncing of the articles, please contact
+[NH Nieuws](https://www.nhnieuws.nl/contact).
+
+&copy;  NH Media
 
 ## Dutch documentation
 

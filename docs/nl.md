@@ -31,15 +31,15 @@ en de Credentials `Valid`
 
 ---
 
-## Werking plug-in
+## Werking plugin
 
 Iedere keer als u een nieuw artikel gepubliceerd dan wordt deze automatisch verstuurd naar ABC Manager.
 Na ontvangst wordt het artikel gereviewd door de redactie en kunnen ze het publiceren. Foto's/Videos/Audio bestanden
 worden automatisch meegenomen. Er hoeft namens een redacteur/schrijver van uw omroep/organisatie geen extra actie
 te worden gedaan.
 
-Als er in ABC manager een artikel wordt gepubliseerd over uw regio dan wordt dit artikel automatisch naar uw wordpress
-omgeving verstuurd. Afhankelijk van de instellingen in ABC Manager krijgt het artike de status `Published` of `Draft`.
+Als er in ABC Manager een artikel wordt gepubliceerd over uw regio dan wordt dit artikel automatisch naar uw wordpress
+omgeving verstuurd. Afhankelijk van de instellingen in ABC Manager krijgt het artikel de status `Published` of `Draft`.
 
 ### Fouten/Problemen
 
