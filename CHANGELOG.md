@@ -4,6 +4,18 @@
 * Added `Region taxonomy name` field to the settings. This is for partners that use a custom taxonomy to add
   a region to their post
 
+## 0.8.4
+* We now support featured images when saving a post to ABC Manager
+
+## 0.8.3
+* Don't send articles to ABC when they are already send from ABC
+
+## 0.8.2
+* Implement extra credentials check
+* Fix some logics on retrieving bearer token from ABC
+* Rename some labels for fields
+* Add notice on classic editor when the post is successfully send to ABC Manager
+
 ## 0.8.1
 * Added a `composer.json` with scripts to check code quality, using tools like PHPStan and PHP CodeSniffer.
   * Run `composer phpcheck` to check the code.
