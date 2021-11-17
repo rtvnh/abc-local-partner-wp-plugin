@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.5
+* Added `Region taxonomy name` field to the settings. This is for partners that use a custom taxonomy to add
+  a region to their post
+
 ## 0.8.1
 * Added a `composer.json` with scripts to check code quality, using tools like PHPStan and PHP CodeSniffer.
   * Run `composer phpcheck` to check the code.
