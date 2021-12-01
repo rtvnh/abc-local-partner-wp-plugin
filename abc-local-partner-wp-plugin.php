@@ -65,10 +65,10 @@ function abclocalpartner_register_settings(): void {
 		'abclocalpartner_options_group',
 		'abclocalpartner_option_access_token'
 	);
-    register_setting(
-        'abclocalpartner_options_group',
-        'abclocalpartner_option_region_name'
-    );
+	register_setting(
+		'abclocalpartner_options_group',
+		'abclocalpartner_option_region_name'
+	);
 }
 
 add_action( 'admin_init', 'abclocalpartner_register_settings' );
@@ -138,16 +138,16 @@ function abclocalpartner_options_page(): void {
 								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_partner_client_secret' ) ); ?>"/>
 						</td>
 					</tr>
-                    <tr>
-                        <th scope="row">
-                            <label for="abclocalpartner_option_region_name">Region taxonomy name</label>
-                        </th>
-                        <td>
-                            <input type="text" id="abclocalpartner_option_region_name"
-                                   name="abclocalpartner_option_region_name" class="regular-text"
-                                   value="<?php echo esc_attr( get_option( 'abclocalpartner_option_region_name' ) ); ?>"/>
-                        </td>
-                    </tr>
+					<tr>
+						<th scope="row">
+							<label for="abclocalpartner_option_region_name">Region taxonomy name</label>
+						</th>
+						<td>
+							<input type="text" id="abclocalpartner_option_region_name"
+								name="abclocalpartner_option_region_name" class="regular-text"
+								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_region_name' ) ); ?>"/>
+						</td>
+					</tr>
 					<style type="text/css">
 						.status-dot {
 							height: 10px;
@@ -348,17 +348,18 @@ function check_abc_status(): bool {
  * @param WP_Post  $post             The WordPress post instance.
  * @param string[] $post_galleries   A list of galleries from the post content.
  * @param string   $post_featured    An URL for the featured image in the post.
+ * @param int      $attempts         The amount of retry attempts.
  *
  * @return bool
  */
-function post_article_to_abc_manager( WP_Post $post, array $post_galleries, string $post_featured ): bool {
-	$post_json          = wp_json_encode( $post );
-	$galleries_json     = wp_json_encode( $post_galleries );
-	$api_endpoint       = get_option( 'abclocalpartner_option_abc_url' );
-	$partner_name       = get_option( 'abclocalpartner_option_partner_name' );
-	$region_taxonomy    = get_option( 'abclocalpartner_option_region_name' );
-	$bearer_token       = get_abc_bearer_token();
-	$regions            = get_the_terms($post, $region_taxonomy);
+function post_article_to_abc_manager( WP_Post $post, array $post_galleries, string $post_featured, int $attempts = 0 ): bool {
+	$post_json       = wp_json_encode( $post );
+	$galleries_json  = wp_json_encode( $post_galleries );
+	$api_endpoint    = get_option( 'abclocalpartner_option_abc_url' );
+	$partner_name    = get_option( 'abclocalpartner_option_partner_name' );
+	$region_taxonomy = get_option( 'abclocalpartner_option_region_name' );
+	$bearer_token    = get_abc_bearer_token();
+	$regions         = get_the_terms( $post, $region_taxonomy );
 
 	if ( empty( $bearer_token ) ) {
 		return false;
@@ -372,7 +373,7 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries, stri
 				'content'   => $post_json,
 				'featured'  => $post_featured,
 				'galleries' => $galleries_json,
-                'regions'   => wp_json_encode($regions)
+				'regions'   => wp_json_encode( $regions ),
 			),
 			'headers' => array_merge( get_environment_headers(), array( 'Authorization' => 'Bearer ' . $bearer_token ) ),
 		)
@@ -386,6 +387,12 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries, stri
 		return true;
 	}
 	if ( 'Unauthorized' === $response['body'] ) {
+		if ( 0 === $attempts ) {
+			get_abc_bearer_token( true );
+
+			post_article_to_abc_manager( $post, $post_galleries, $post_featured, $attempts + 1 );
+		}
+
 		return false;
 	}
 
