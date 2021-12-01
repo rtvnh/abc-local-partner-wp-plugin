@@ -1,6 +1,7 @@
 # Changelog
 
 ## 0.8.5
+* Fixed bug with oAuth2 token not being renewed.
 * Added `Region taxonomy name` field to the settings. This is for partners that use a custom taxonomy to add
   a region to their post
 
