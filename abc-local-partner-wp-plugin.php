@@ -15,7 +15,7 @@
  * Plugin Name:         ABC Manager - Local Partner
  * Plugin URI:          https://github.com/rtvnh/abc-local-partner-wp-plugin
  * Description:         WordPress Plugin to post new updates to the ABC Manager of NH/AT5
- * Version:             0.8.5
+ * Version:             0.8.6
  * Author:              AngryBytes B.V.
  * Author URI:          https://angrybytes.com
  * License:             GPL-2.0+
@@ -44,6 +44,8 @@ function abclocalpartner_register_settings(): void {
 	add_option( 'abclocalpartner_option_partner_client_secret' );
 	add_option( 'abclocalpartner_option_access_token' );
 	add_option( 'abclocalpartner_option_region_name' );
+	add_option( 'abclocalpartner_option_category_name' );
+	add_option( 'abclocalpartner_option_tag_name' );
 
 	register_setting(
 		'abclocalpartner_options_group',
@@ -68,6 +70,14 @@ function abclocalpartner_register_settings(): void {
 	register_setting(
 		'abclocalpartner_options_group',
 		'abclocalpartner_option_region_name'
+	);
+	register_setting(
+		'abclocalpartner_options_group',
+		'abclocalpartner_option_category_name'
+	);
+	register_setting(
+		'abclocalpartner_options_group',
+		'abclocalpartner_option_tag_name'
 	);
 }
 
@@ -146,6 +156,29 @@ function abclocalpartner_options_page(): void {
 							<input type="text" id="abclocalpartner_option_region_name"
 								name="abclocalpartner_option_region_name" class="regular-text"
 								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_region_name' ) ); ?>"/>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">Posts that contain the tag or category defined below will not be send to ABC Manager </td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="abclocalpartner_option_category_name">Category name</label>
+						</th>
+						<td>
+							<input type="text" id="abclocalpartner_option_category_name"
+								name="abclocalpartner_option_category_name" class="regular-text"
+								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_category_name' ) ); ?>"/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">
+							<label for="abclocalpartner_option_tag_name">Tag name</label>
+						</th>
+						<td>
+							<input type="text" id="abclocalpartner_option_tag_name"
+								name="abclocalpartner_option_tag_name" class="regular-text"
+								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_tag_name' ) ); ?>"/>
 						</td>
 					</tr>
 					<style type="text/css">
@@ -410,6 +443,36 @@ function abclocalpartner_post_to_abc( WP_Post $post ): void {
 		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
 	) {
 		if ( get_post_status( $post ) === 'publish' ) {
+			$send_to_abc = true;
+			$category    = get_option( 'abclocalpartner_option_category_name' );
+			$tag         = get_option( 'abclocalpartner_option_tag_name' );
+
+			if ( $tag ) {
+				$post_tags = get_the_tags( $post->ID );
+				if ( is_array( $post_tags ) ) {
+					foreach ( $post_tags as $post_tag ) {
+						if ( $tag === $post_tag->name ) {
+							$send_to_abc = false;
+						}
+					}
+				}
+			}
+
+			if ( $category ) {
+				$post_categories = get_the_category( $post->ID );
+				if ( is_array( $post_categories ) ) {
+					foreach ( $post_categories as $post_category ) {
+						if ( $category === $post_category->name ) {
+							$send_to_abc = false;
+						}
+					}
+				}
+			}
+
+			if ( ! $send_to_abc ) {
+				return;
+			}
+
 			$post_galleries = get_post_galleries( $post );
 			$post_featured  = get_the_post_thumbnail_url( $post );
 

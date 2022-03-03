@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.6
+* Add setting to prevent posts to be send to ABC manager when it contains a certain category or tag.
+
 ## 0.8.5
 * Fixed bug with oAuth2 token not being renewed.
 * Added `Region taxonomy name` field to the settings. This is for partners that use a custom taxonomy to add
