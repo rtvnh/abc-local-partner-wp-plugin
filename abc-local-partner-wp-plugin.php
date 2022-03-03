@@ -158,9 +158,9 @@ function abclocalpartner_options_page(): void {
 								value="<?php echo esc_attr( get_option( 'abclocalpartner_option_region_name' ) ); ?>"/>
 						</td>
 					</tr>
-                    <tr>
-                        <td colspan="2">Posts that contain the tag or category defined below will not be send to ABC Manager </td>
-                    </tr>
+					<tr>
+						<td colspan="2">Posts that contain the tag or category defined below will not be send to ABC Manager </td>
+					</tr>
 					<tr>
 						<th scope="row">
 							<label for="abclocalpartner_option_category_name">Category name</label>
@@ -443,35 +443,35 @@ function abclocalpartner_post_to_abc( WP_Post $post ): void {
 		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
 	) {
 		if ( get_post_status( $post ) === 'publish' ) {
-            $sendToAbc = true;
-            $category = get_option( 'abclocalpartner_option_category_name' );
-            $tag = get_option( 'abclocalpartner_option_tag_name' );
+			$send_to_abc = true;
+			$category    = get_option( 'abclocalpartner_option_category_name' );
+			$tag         = get_option( 'abclocalpartner_option_tag_name' );
 
-            if ($tag) {
-                $postTags = get_the_tags( $post->ID );
-                if ($postTags) {
-                    foreach ($postTags as $postTag) {
-                        if ($tag === $postTag->name) {
-                            $sendToAbc = false;
-                        }
-                    }
-                }
-            }
+			if ( $tag ) {
+				$post_tags = get_the_tags( $post->ID );
+				if ( is_array( $post_tags ) ) {
+					foreach ( $post_tags as $post_tag ) {
+						if ( $tag === $post_tag->name ) {
+							$send_to_abc = false;
+						}
+					}
+				}
+			}
 
-            if ($category) {
-                $postCategories = get_the_category( $post->ID );
-                if ($postCategories) {
-                    foreach ($postCategories as $postCategory) {
-                        if ($category === $postCategory->name) {
-                            $sendToAbc = false;
-                        }
-                    }
-                }
-            }
+			if ( $category ) {
+				$post_categories = get_the_category( $post->ID );
+				if ( is_array( $post_categories ) ) {
+					foreach ( $post_categories as $post_category ) {
+						if ( $category === $post_category->name ) {
+							$send_to_abc = false;
+						}
+					}
+				}
+			}
 
-            if (!$sendToAbc) {
-                return;
-            }
+			if ( ! $send_to_abc ) {
+				return;
+			}
 
 			$post_galleries = get_post_galleries( $post );
 			$post_featured  = get_the_post_thumbnail_url( $post );
