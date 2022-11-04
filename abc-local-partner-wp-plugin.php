@@ -398,6 +398,9 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries, stri
 		return false;
 	}
 
+    // Add author name to post content
+    $post->author_name = get_the_author_meta('display_name', $post->post_author);
+
 	$response = wp_remote_post(
 		$api_endpoint . '/partner/article',
 		array(
@@ -479,9 +482,6 @@ function abclocalpartner_post_to_abc( WP_Post $post ): void {
 			if ( is_bool( $post_featured ) ) {
 				$post_featured = '';
 			}
-
-            // Add author name to post content
-            $post->author_name = get_the_author_meta('display_name', $post->post_author);
 
 			global $abc_post_status;
 			$abc_post_status = post_article_to_abc_manager(
