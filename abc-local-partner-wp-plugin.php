@@ -480,6 +480,9 @@ function abclocalpartner_post_to_abc( WP_Post $post ): void {
 				$post_featured = '';
 			}
 
+            // Add author name to post content
+            $post->author_name = get_the_author_meta('display_name', $post->post_author);
+
 			global $abc_post_status;
 			$abc_post_status = post_article_to_abc_manager(
 				$post,
