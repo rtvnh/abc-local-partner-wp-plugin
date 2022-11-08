@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.8.7
+* Add author to post content when sending post to ABC manager
+
 ## 0.8.6
 * Add setting to prevent posts to be send to ABC manager when it contains a certain category or tag.
 

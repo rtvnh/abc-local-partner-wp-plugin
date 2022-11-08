@@ -15,7 +15,7 @@
  * Plugin Name:         ABC Manager - Local Partner
  * Plugin URI:          https://github.com/rtvnh/abc-local-partner-wp-plugin
  * Description:         WordPress Plugin to post new updates to the ABC Manager of NH/AT5
- * Version:             0.8.6
+ * Version:             0.8.7
  * Author:              AngryBytes B.V.
  * Author URI:          https://angrybytes.com
  * License:             GPL-2.0+
@@ -397,6 +397,9 @@ function post_article_to_abc_manager( WP_Post $post, array $post_galleries, stri
 	if ( empty( $bearer_token ) ) {
 		return false;
 	}
+
+    // Add author name to post content
+    $post->author_name = get_the_author_meta('display_name', $post->post_author);
 
 	$response = wp_remote_post(
 		$api_endpoint . '/partner/article',
