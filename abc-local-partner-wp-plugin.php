@@ -445,7 +445,8 @@ function abclocalpartner_post_to_abc( WP_Post $post ): void {
 		! empty( get_option( 'abclocalpartner_option_partner_client_id' ) ) &&
 		! empty( get_option( 'abclocalpartner_option_partner_client_secret' ) )
 	) {
-		if ( get_post_status( $post ) === 'publish' ) {
+        $postStatus = get_post_status( $post );
+		if ( $postStatus === 'publish' || $postStatus === 'future' ) {
 			$send_to_abc = true;
 			$category    = get_option( 'abclocalpartner_option_category_name' );
 			$tag         = get_option( 'abclocalpartner_option_tag_name' );
